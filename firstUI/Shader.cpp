@@ -22,11 +22,13 @@ Shader::Shader(const char* vertexPath, const char* fragPath, bool verbose)
 			fragSource += line + '\n';
 	}
 
+#ifdef _DEBUG
 	if (verbose)
 	{
 		std::cout << vertexPath << ": " << std::endl << vertexSource << std::endl << std::endl;
 		std::cout << fragPath << ": " << std::endl << fragSource << std::endl << std::endl;
 	}
+#endif
 
 	const char* vertexCSource = vertexSource.c_str();
 	const char* fragCSource = fragSource.c_str();
@@ -52,7 +54,6 @@ Shader::Shader(const char* vertexPath, const char* fragPath, bool verbose)
 
 Shader::~Shader()
 {
-	std::cout << "shader destructor called" << std::endl;
 	glDeleteProgram(this->shaderID);
 }
 

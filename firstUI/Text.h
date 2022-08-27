@@ -4,10 +4,9 @@
 #include FT_FREETYPE_H
 
 #include <string>
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
 
 #include "Shader.h"
+
 #include "UIElement.h"
 
 struct FTChar
@@ -29,6 +28,7 @@ public:
 	static glm::mat4 projection;
 	static unsigned pixelHeight;
 	static unsigned* windowWidth, *windowHeight;
+	static float* ratioW, *ratioH;
 
 	std::string text;
 	float realX, realY, scaleX, scaleY;
@@ -37,9 +37,10 @@ public:
 	Text(std::string text, float centerX, float centerY, float scaleX, float scaleY, glm::vec4 textColor);
 	~Text();
 
-	static void init(unsigned* WW, unsigned* WH, unsigned pixelHeight);
-	void update(Update update);
+	static void init(unsigned* WW, unsigned* WH, float* ratioW, float* ratioH, unsigned pixelHeight);
 	static void cleanup();
+
+	void update();
 	void render();
 };
 

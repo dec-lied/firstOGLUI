@@ -10,8 +10,8 @@ FT_Face Text::face;
 glm::mat4 Text::projection;
 unsigned Text::pixelHeight;
 
-unsigned* Text::windowWidth;
-unsigned* Text::windowHeight;
+unsigned* Text::windowWidth, *Text::windowHeight;
+float* Text::ratioW, *Text::ratioH;
 
 Text::Text(std::string text, float centerX, float centerY, float scaleX, float scaleY, glm::vec4 textColor)
 	: text(text)
@@ -27,15 +27,15 @@ Text::Text(std::string text, float centerX, float centerY, float scaleX, float s
 		FTChar ch = Text::FTChars[*c];
 
 		if (!(c == text.end() - 1))
-			this->width += (ch.Advance >> 6) * this->scaleX;
+			this->width += (ch.Advance >> 6) * (this->scaleX * *Text::ratioW);
 		else
 		{
-			this->width += ch.Bearing.x * this->scaleX;
-			this->width += ch.Size.x * this->scaleX;
+			this->width += ch.Bearing.x * (this->scaleX * *Text::ratioW);
+			this->width += ch.Size.x * (this->scaleX * *Text::ratioW);
 		}
 	}
 
-	this->height = Text::FTChars['T'].Size.y * this->scaleY;
+	this->height = Text::FTChars['T'].Size.y * (this->scaleY * *Text::ratioH);
 
 	this->realX = (centerX * *Text::windowWidth) - (this->width / 2.0f);
 	this->realY = (centerY * *Text::windowHeight) - (this->height / 2.0f);
@@ -43,25 +43,32 @@ Text::Text(std::string text, float centerX, float centerY, float scaleX, float s
 
 Text::~Text()
 {
+
 }
 
-void Text::init(unsigned* WW, unsigned* WH, unsigned pixelHeight)
+void Text::init(unsigned* WW, unsigned* WH, float* ratioW, float* ratioH, unsigned pixelHeight)
 {
 	// freetype setup
 	if (FT_Init_FreeType(&Text::ftlib))
 	{
+#ifdef _DEBUG
 		std::cout << "failed to initialize freetype" << std::endl;
+#endif
 		return;
 	}
 
 	if (FT_New_Face(Text::ftlib, "fonts/arial.ttf", 0, &face))
 	{
+#ifdef _DEBUG
 		std::cout << "failed to load arial.ttf" << std::endl;
+#endif
 		return;
 	}
 
 	Text::windowWidth = WW;
 	Text::windowHeight = WH;
+	Text::ratioW = ratioW;
+	Text::ratioH = ratioH;
 
 	Text::projection = glm::ortho(0.0f, (float)(*WW), 0.0f, (float)(*WH));
 	Text::textShader = std::unique_ptr<Shader>(new Shader("shaders/text.vert", "shaders/text.frag", true));
@@ -73,7 +80,9 @@ void Text::init(unsigned* WW, unsigned* WH, unsigned pixelHeight)
 	{
 		if (FT_Load_Char(Text::face, c, FT_LOAD_RENDER))
 		{
+#ifdef _DEBUG
 			std::cout << "failed to load glyph: " << (char)c << std::endl;
+#endif
 			continue;
 		}
 
@@ -122,18 +131,15 @@ void Text::init(unsigned* WW, unsigned* WH, unsigned pixelHeight)
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
 	glEnableVertexAttribArray(0);
 
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
 
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void Text::update(Update update)
+void Text::update()
 {
-	this->projection = glm::ortho(0.0f, (float)update.newWW, 0.0f, (float)update.newWH);
-
-	this->scaleX *= (float)update.newWW / (float)update.oldWW;
-	this->scaleY *= (float)update.newWH / (float)update.oldWH;
+	this->projection = glm::ortho(0.0f, (float)*Text::windowWidth, 0.0f, (float)*Text::windowHeight);
 
 	this->width = 0.0f;
 	for (std::string::const_iterator c = this->text.begin(); c != this->text.end(); c++)
@@ -141,15 +147,15 @@ void Text::update(Update update)
 		FTChar ch = Text::FTChars[*c];
 
 		if (!(c == this->text.end() - 1))
-			this->width += (ch.Advance >> 6) * this->scaleX;
+			this->width += (ch.Advance >> 6) * (this->scaleX * *Text::ratioW);
 		else
 		{
-			this->width += ch.Bearing.x * this->scaleX;
-			this->width += ch.Size.x * this->scaleX;
+			this->width += ch.Bearing.x * (this->scaleX * *Text::ratioW);
+			this->width += ch.Size.x * (this->scaleX * *Text::ratioW);
 		}
 	}
 
-	this->height = Text::FTChars['T'].Size.y * this->scaleY;
+	this->height = Text::FTChars['T'].Size.y * (this->scaleY * *Text::ratioH);
 }
 
 void Text::cleanup()
@@ -180,11 +186,11 @@ void Text::render()
 	{
 		FTChar ch = Text::FTChars[*c];
 
-		float xpos = this->realX + (ch.Bearing.x * scaleX);
-		float ypos = this->realY - ((ch.Size.y - ch.Bearing.y) * scaleY);
+		float xpos = this->realX + (ch.Bearing.x * scaleX * *Text::ratioW);
+		float ypos = this->realY - ((ch.Size.y - ch.Bearing.y) * (scaleY * *Text::ratioH));
 
-		float w = ch.Size.x * scaleX;
-		float h = ch.Size.y * scaleY;
+		float w = ch.Size.x * (scaleX * *Text::ratioW);
+		float h = ch.Size.y * (scaleY * *Text::ratioH);
 
 		float vertices[6][4]
 		{
@@ -202,7 +208,7 @@ void Text::render()
 		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 
-		this->realX += (ch.Advance >> 6) * scaleX;
+		this->realX += (ch.Advance >> 6) * (scaleX * *Text::ratioW);
 	}
 
 	glBindVertexArray(0);

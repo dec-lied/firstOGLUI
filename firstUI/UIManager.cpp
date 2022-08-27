@@ -2,7 +2,7 @@
 
 std::vector<UIElement*> Yui::UIElements;
 irrklang::ISoundEngine* Yui::soundEngine = irrklang::createIrrKlangDevice();
-std::vector<std::pair<UIElement*, Update>> Yui::updateQueue;
+
 unsigned Yui::scene;
 bool Yui::toClose = false;
 
@@ -11,28 +11,33 @@ void Yui::addElement(UIElement* element)
 	Yui::UIElements.push_back(element);
 }
 
+void Yui::addElements(unsigned count, ...)
+{
+	va_list args;
+	va_start(args, count);
+
+	for (unsigned i = 0; i < count; i++)
+		Yui::UIElements.push_back(va_arg(args, UIElement*));
+
+	va_end(args);
+}
+
 void Yui::removeElement(UIElement* element)
 {
 	int index;
 	bool contains = false;
 
-	for (int i = 0; i < Yui::UIElements.size(); i++)
+	for (index = 0; index < Yui::UIElements.size(); index++)
 	{
-		if (Yui::UIElements[i] == element)
+		if (Yui::UIElements[index] == element)
 		{
-			index = i;
 			contains = true;
 			break;
 		}
 	}
 
 	if (contains)
-	{
 		Yui::UIElements.erase(Yui::UIElements.begin() + index);
-		std::cout << "element removed sucessfully. new size: " << Yui::UIElements.size() << std::endl;
-	}
-	else
-		std::cout << "element not found in Yui list" << std::endl;
 }
 
 void Yui::purgeElements()
@@ -44,17 +49,10 @@ void Yui::purgeElements()
 	}
 }
 
-void Yui::pushUpdateQueue(std::pair<UIElement*, Update> updateInfo)
+void Yui::updateAll()
 {
-	Yui::updateQueue.push_back(updateInfo);
-}
-
-void Yui::commitUpdateQueue()
-{
-	for (const std::pair<UIElement*, Update>& updateInfo : Yui::updateQueue)
-		updateInfo.first->update(updateInfo.second);
-
-	Yui::updateQueue.clear();
+	for (UIElement* element : Yui::UIElements)
+		element->update();
 }
 
 void Yui::renderAll()
@@ -65,19 +63,17 @@ void Yui::renderAll()
 
 void Yui::loadScene(unsigned sceneID)
 {
+	Yui::scene = sceneID;
+
 	switch (sceneID)
 	{
 	case 0:
-		Yui::scene = sceneID;
 		Yui::purgeElements();
 
-		Yui::addElement
+		Yui::addElements
 		(
-			new Text("Main Menu", 0.5f, 0.90f, 1.75f, 1.75f, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f))
-		);
-
-		Yui::addElement
-		(
+			4,
+			new Text("Main Menu", 0.5f, 0.90f, 1.75f, 1.75f, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)),
 			new Button
 			(
 				new Text("Play", 0.5f, 0.5f, 1.0f, 1.0f, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)),
@@ -86,11 +82,7 @@ void Yui::loadScene(unsigned sceneID)
 					Yui::soundEngine->play2D("audio/flick.mp3");
 					Yui::loadScene(1);
 				}
-			)
-		);
-
-		Yui::addElement
-		(
+			),
 			new Button
 			(
 				new Text("Level Select", 0.5f, 0.3f, 1.0f, 1.0f, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)),
@@ -99,11 +91,7 @@ void Yui::loadScene(unsigned sceneID)
 					Yui::soundEngine->play2D("audio/flick.mp3");
 					Yui::loadScene(2);
 				}
-			)
-		);
-
-		Yui::addElement
-		(
+			),
 			new Button
 			(
 				new Text("Quit", 0.5f, 0.1f, 1.0f, 1.0f, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)),
@@ -118,21 +106,13 @@ void Yui::loadScene(unsigned sceneID)
 		break;
 
 	case 1:
-		Yui::scene = sceneID;
 		Yui::purgeElements();
 
-		Yui::addElement
+		Yui::addElements
 		(
-			new Text("Play", 0.5f, 0.90f, 1.75f, 1.75f, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f))
-		);
-
-		Yui::addElement
-		(
-			new Text("Nothing here. Click the button to return to the main menu.", 0.5f, 0.5f, 1.0f, 1.0f, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f))
-		);
-
-		Yui::addElement
-		(
+			3,
+			new Text("Play", 0.5f, 0.90f, 1.75f, 1.75f, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)),
+			new Text("Nothing here. Click the button to return to the main menu.", 0.5f, 0.5f, 1.0f, 1.0f, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)),
 			new Button
 			(
 				new Text("Return", 0.5f, 0.15f, 1.0f, 1.0f, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)),
@@ -147,16 +127,12 @@ void Yui::loadScene(unsigned sceneID)
 		break;
 
 	case 2:
-		Yui::scene = sceneID;
 		Yui::purgeElements();
 
-		Yui::addElement
+		Yui::addElements
 		(
-			new Text("Level Select", 0.5f, 0.90f, 1.75f, 1.75f, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f))
-		);
-
-		Yui::addElement
-		(
+			14,
+			new Text("Level Select", 0.5f, 0.90f, 1.75f, 1.75f, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)),
 			new Button
 			(
 				new Text("1 ", 0.2f, 0.65f, 1.0f, 1.0f, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)),
@@ -165,11 +141,8 @@ void Yui::loadScene(unsigned sceneID)
 					Yui::soundEngine->play2D("audio/flick.mp3");
 					Yui::loadScene(3);
 				}
-			)
-		);
+			),
 
-		Yui::addElement
-		(
 			new Button
 			(
 				new Text("2 ", 0.4f, 0.65f, 1.0f, 1.0f, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)),
@@ -178,11 +151,8 @@ void Yui::loadScene(unsigned sceneID)
 					Yui::soundEngine->play2D("audio/flick.mp3");
 					Yui::loadScene(3);
 				}
-			)
-		);
+			),
 
-		Yui::addElement
-		(
 			new Button
 			(
 				new Text("3 ", 0.6f, 0.65f, 1.0f, 1.0f, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)),
@@ -191,11 +161,8 @@ void Yui::loadScene(unsigned sceneID)
 					Yui::soundEngine->play2D("audio/flick.mp3");
 					Yui::loadScene(3);
 				}
-			)
-		);
+			),
 
-		Yui::addElement
-		(
 			new Button
 			(
 				new Text("4 ", 0.8f, 0.65f, 1.0f, 1.0f, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)),
@@ -204,11 +171,8 @@ void Yui::loadScene(unsigned sceneID)
 					Yui::soundEngine->play2D("audio/flick.mp3");
 					Yui::loadScene(3);
 				}
-			)
-		);
+			),
 
-		Yui::addElement
-		(
 			new Button
 			(
 				new Text("5 ", 0.2f, 0.525f, 1.0f, 1.0f, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)),
@@ -217,11 +181,8 @@ void Yui::loadScene(unsigned sceneID)
 					Yui::soundEngine->play2D("audio/flick.mp3");
 					Yui::loadScene(3);
 				}
-			)
-		);
+			),
 
-		Yui::addElement
-		(
 			new Button
 			(
 				new Text("6 ", 0.4f, 0.525f, 1.0f, 1.0f, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)),
@@ -230,11 +191,8 @@ void Yui::loadScene(unsigned sceneID)
 					Yui::soundEngine->play2D("audio/flick.mp3");
 					Yui::loadScene(3);
 				}
-			)
-		);
+			),
 
-		Yui::addElement
-		(
 			new Button
 			(
 				new Text("7 ", 0.6f, 0.525f, 1.0f, 1.0f, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)),
@@ -243,11 +201,8 @@ void Yui::loadScene(unsigned sceneID)
 					Yui::soundEngine->play2D("audio/flick.mp3");
 					Yui::loadScene(3);
 				}
-			)
-		);
+			),
 
-		Yui::addElement
-		(
 			new Button
 			(
 				new Text("8 ", 0.8f, 0.525f, 1.0f, 1.0f, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)),
@@ -256,11 +211,8 @@ void Yui::loadScene(unsigned sceneID)
 					Yui::soundEngine->play2D("audio/flick.mp3");
 					Yui::loadScene(3);
 				}
-			)
-		);
+			),
 
-		Yui::addElement
-		(
 			new Button
 			(
 				new Text("9 ", 0.2f, 0.4f, 1.0f, 1.0f, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)),
@@ -269,11 +221,8 @@ void Yui::loadScene(unsigned sceneID)
 					Yui::soundEngine->play2D("audio/flick.mp3");
 					Yui::loadScene(3);
 				}
-			)
-		);
+			),
 
-		Yui::addElement
-		(
 			new Button
 			(
 				new Text("10", 0.4f, 0.4f, 1.0f, 1.0f, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)),
@@ -282,11 +231,8 @@ void Yui::loadScene(unsigned sceneID)
 					Yui::soundEngine->play2D("audio/flick.mp3");
 					Yui::loadScene(3);
 				}
-			)
-		);
+			),
 
-		Yui::addElement
-		(
 			new Button
 			(
 				new Text("11", 0.6f, 0.4f, 1.0f, 1.0f, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)),
@@ -295,11 +241,8 @@ void Yui::loadScene(unsigned sceneID)
 					Yui::soundEngine->play2D("audio/flick.mp3");
 					Yui::loadScene(3);
 				}
-			)
-		);
+			),
 
-		Yui::addElement
-		(
 			new Button
 			(
 				new Text("12", 0.8f, 0.4f, 1.0f, 1.0f, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)),
@@ -308,11 +251,8 @@ void Yui::loadScene(unsigned sceneID)
 					Yui::soundEngine->play2D("audio/flick.mp3");
 					Yui::loadScene(3);
 				}
-			)
-		);
+			),
 
-		Yui::addElement
-		(
 			new Button
 			(
 				new Text("Back", 0.5f, 0.15f, 1.0f, 1.0f, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)),
@@ -327,22 +267,13 @@ void Yui::loadScene(unsigned sceneID)
 		break;
 
 	case 3:
-
-		Yui::scene = sceneID;
 		Yui::purgeElements();
 
-		Yui::addElement
+		Yui::addElements
 		(
-			new Text("Sample Level", 0.5f, 0.90f, 1.75f, 1.75f, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f))
-		);
-
-		Yui::addElement
-		(
-			new Text("Nothing here. Click the button to return to level select.", 0.5f, 0.5f, 1.0f, 1.0f, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f))
-		);
-
-		Yui::addElement
-		(
+			3,
+			new Text("Sample Level", 0.5f, 0.90f, 1.75f, 1.75f, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)),
+			new Text("Nothing here. Click the button to return to level select.", 0.5f, 0.5f, 1.0f, 1.0f, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)),
 			new Button
 			(
 				new Text("Return", 0.5f, 0.15f, 1.0f, 1.0f, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)),

@@ -6,4 +6,5 @@ UIElement::UIElement(float centerX, float centerY, float width, float height)
 	, width(width)
 	, height(height)
 {
+
 }

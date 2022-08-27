@@ -6,7 +6,10 @@
 #include <map>
 #include <string>
 #include <fstream>
+
+#ifdef _DEBUG
 #include <iostream>
+#endif
 
 class Shader
 {

@@ -1,13 +1,10 @@
 #pragma once
 
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
 #include <irrKlang/irrKlang.h>
 
-#include "Text.h"
 #include "Shader.h"
+
+#include "Text.h"
 #include "UIElement.h"
 
 enum ButtonType
@@ -18,19 +15,18 @@ enum ButtonType
 class Button : public UIElement
 {
 public:
-	static std::unique_ptr<Shader> buttonShader;
 	static glm::mat4 projection;
-	static unsigned* windowWidth, * windowHeight;
+	static std::unique_ptr<Shader> buttonShader;
+	static unsigned *windowWidth, *windowHeight;
 
 	GLuint VAO, VBO;
+	Text* text = nullptr;
+	ButtonType buttonType;
 	float xMargin, yMargin, borderWidth;
 	glm::vec4 bgColor, hoverColor, borderColor;
-	Text* text = nullptr;
 
 	void(*func)();
 	bool hovering = false;
-
-	ButtonType buttonType;
 
 	Button(float x, float y, float width, float height, glm::vec4 bgColor, glm::vec4 hoverColor, void(*func)());
 	Button(float x, float y, float width, float height, float borderWidth, glm::vec4 bgColor, glm::vec4 hoverColor, glm::vec4 borderColor, void(*func)());
@@ -40,7 +36,8 @@ public:
 
 	static void init(unsigned* WW, unsigned* WH);
 	static void cleanup();
-	void update(Update update);
+
+	void update();
 	void render();
 };
 
