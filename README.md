@@ -3,7 +3,8 @@
 
 <h1> Initial Note / Disclaimer </h1>
   <p>This application is very minimal right now, the code took a long time to develop and I just wanted to make a minimal example UI to show my progress and how it works </p>
-  <p> <b> IMPORTANT: </b> For some reason this application, in my testing, uses a LOT of GPU and and more CPU than anticipated. It could be solely due to freetype and the way I handle it, or I could have some strange GPU memory leak. It only uses 23MB of RAM so I'm not entirely sure, but I am going to look into it </p>
+  <p> <b> ~~IMPORTANT: </b> For some reason this application, in my testing, uses a LOT of GPU and and more CPU than anticipated. It could be solely due to freetype and the way I handle it, or I could have some strange GPU memory leak. It only uses 23MB of RAM so I'm not entirely sure, but I am going to look into it~~ </p>
+  <p> This is fixed. I had vsync off so it was going full throttle on calculations. It now sits at a comfy 1.3% CPU and ~3% GPU. </p>
 
 <h1> How to download and execute </h1>
   <p> <b> Note about source code: </b> the dlls are not included in the /firstUI folder due to them being architecture dependant. Thus, if you want to run the source    code yourself, drag the respective dlls from the /standalone folder into the /firstUI folder where main.cpp resides </p>
