@@ -13,7 +13,7 @@
 git clone https://github.com/dec-lied/firstOGLUI.git
 ``` 
 
-<p> to download the repository. The main code is in the /firstUI folder with the includes being in the include/ directory. </p>
+<p> to download the repository. The main code is in the /firstUI folder with the includes being in the /include directory. </p>
 <p> You can do either of the following to run the program: </p>
 <ol>
   <li> Build it from the source yourself by opening oglUI.sln and in Visual Studio, selecting Release as well as x64 or x86 according to your pc architecture then click build. If you decide to do this, be sure to <b> <ins> place the executable oglUI.exe into the /standalone folder and pull the architecture respective dlls from the dll folders into the /standalone folder together with oglUI.exe. </ins> </b> </li>
