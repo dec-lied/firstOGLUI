@@ -1,5 +1,5 @@
 # firstOGLUI
-8/26/22 CAS Reflection 6 - firstOGLUI
+8/26/22 CAS Reflection 6 & 7 - firstOGLUI
 
 <h1> Initial Note / Disclaimer </h1>
   <p>This application is very minimal right now, but the code took a long time to develop and I just wanted to make a small exmple to show my progress and how it works </p>
