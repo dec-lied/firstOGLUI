@@ -1,4 +1,5 @@
 #include "Text.h"
+#include "Image.h"
 #include "Button.h"
 #include "UIManager.h"
 
@@ -32,34 +33,28 @@ void processInput(GLFWwindow* window)
 	for (UIElement* element : Yui::UIElements)
 	{
 		Button* bp = dynamic_cast<Button*>(element);
-		if (bp)
+		if (bp && bp->isHovering(mouseX, mouseY))
 		{
-			if (mouseX > (element->centerX * WINDOWWIDTH) - ((element->width / 2.0f) * WINDOWWIDTH) && 
-				mouseX < (element->centerX * WINDOWWIDTH) + ((element->width / 2.0f) * WINDOWWIDTH) &&
-				((float)WINDOWHEIGHT - mouseY) > (element->centerY * WINDOWHEIGHT) - ((element->height / 2.0f) * WINDOWHEIGHT) && 
-				((float)WINDOWHEIGHT - mouseY) < (element->centerY * WINDOWHEIGHT) + ((element->height / 2.0f) * WINDOWHEIGHT))
+			if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 			{
-				bp->hovering = true;
-				if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+				if (!lastClicked)
 				{
-					if (!lastClicked)
-					{
-						lastClicked = true;
-						bp->func();
-						break;
-					}
+					lastClicked = true;
+					bp->func();
+					break;
 				}
-				else
-					lastClicked = false;
 			}
 			else
-				bp->hovering = false;
+				lastClicked = false;
 		}
 	}
 }
 
 int main()
 {
+	/*
+		Setting up OpenGL (GLFW, GLAD)
+	*/
 	if (!glfwInit())
 	{
 #ifdef _DEBUG
@@ -111,12 +106,21 @@ int main()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-	Text::init(&WINDOWWIDTH, &WINDOWHEIGHT, &ratioW, &ratioH, 32);
-	Button::init(&WINDOWWIDTH, &WINDOWHEIGHT);
+	/*
+		Setting up UI elements
+	*/
+	stbi_set_flip_vertically_on_load(true);
+
+	UIElement::WINDOWWIDTH = &WINDOWWIDTH;
+	UIElement::WINDOWHEIGHT = &WINDOWHEIGHT;
+
+	Text::init(&ratioW, &ratioH, 32);
+	Image::init();
+	Button::init();
 
 	Yui::UIElements.reserve(10);
 	Yui::loadScene(0);
-
+	
 	while (!glfwWindowShouldClose(window))
 	{
 		// timestep update
@@ -129,12 +133,19 @@ int main()
 
 		processInput(window);
 
+
+
 		Yui::renderAll();
+
+
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 
+	/*
+		Cleanup
+	*/
 	Yui::purgeElements();
 	Button::cleanup();
 	Text::cleanup();

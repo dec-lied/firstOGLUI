@@ -10,6 +10,7 @@
 class UIElement
 {
 public:
+	static unsigned* WINDOWWIDTH, * WINDOWHEIGHT;
 	float centerX, centerY, width, height;
 
 	virtual void render() = 0;

@@ -31,6 +31,9 @@
     <Filter Include="Header Files\ui">
       <UniqueIdentifier>{e14f0349-520b-4714-b969-2402043e2be3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\images">
+      <UniqueIdentifier>{fc70cb3f-748f-45ae-ae67-30743e204bae}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -57,6 +60,12 @@
     <ClCompile Include="Text.cpp">
       <Filter>Source Files\ui</Filter>
     </ClCompile>
+    <ClCompile Include="Image.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
@@ -74,6 +83,12 @@
     <ClInclude Include="Text.h">
       <Filter>Header Files\ui</Filter>
     </ClInclude>
+    <ClInclude Include="Image.h">
+      <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\text.vert">
@@ -86,6 +101,12 @@
       <Filter>Resource Files\shaders</Filter>
     </None>
     <None Include="shaders\button.frag">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="shaders\image.vert">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="shaders\image.frag">
       <Filter>Resource Files\shaders</Filter>
     </None>
   </ItemGroup>
@@ -101,5 +122,10 @@
     <Media Include="audio\flick2.mp3">
       <Filter>Resource Files\audio</Filter>
     </Media>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="images\oops.png">
+      <Filter>Resource Files\images</Filter>
+    </Image>
   </ItemGroup>
 </Project>

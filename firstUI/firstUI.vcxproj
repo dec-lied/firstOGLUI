@@ -148,21 +148,27 @@
   <ItemGroup>
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="glad.c" />
+    <ClCompile Include="Image.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="stb.cpp" />
     <ClCompile Include="Text.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="UIElement.cpp" />
     <ClCompile Include="UIManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h" />
+    <ClInclude Include="Image.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Text.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="UIElement.h" />
     <ClInclude Include="UIManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="shaders\image.frag" />
+    <None Include="shaders\image.vert" />
     <None Include="shaders\button.frag" />
     <None Include="shaders\button.vert" />
     <None Include="shaders\text.frag" />
@@ -174,6 +180,9 @@
   <ItemGroup>
     <Media Include="audio\flick.mp3" />
     <Media Include="audio\flick2.mp3" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="images\oops.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

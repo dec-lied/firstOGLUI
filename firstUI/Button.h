@@ -14,14 +14,17 @@ enum ButtonType
 
 class Button : public UIElement
 {
+private:
+	GLuint VAO, VBO;
+	ButtonType buttonType;
+
 public:
 	static glm::mat4 projection;
 	static std::unique_ptr<Shader> buttonShader;
-	static unsigned *windowWidth, *windowHeight;
+	static void init();
+	static void cleanup();
 
-	GLuint VAO, VBO;
 	Text* text = nullptr;
-	ButtonType buttonType;
 	float xMargin, yMargin, borderWidth;
 	glm::vec4 bgColor, hoverColor, borderColor;
 
@@ -34,8 +37,7 @@ public:
 	Button(Text* text, float xMargin, float yMargin, float borderWidth, glm::vec4 bgColor, glm::vec4 hoverColor, glm::vec4 borderColor, void(*func)());
 	~Button();
 
-	static void init(unsigned* WW, unsigned* WH);
-	static void cleanup();
+	bool isHovering(float mouseX, float mouseY);
 
 	void update();
 	void render();

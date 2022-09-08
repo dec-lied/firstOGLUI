@@ -10,7 +10,6 @@ FT_Face Text::face;
 glm::mat4 Text::projection;
 unsigned Text::pixelHeight;
 
-unsigned* Text::windowWidth, *Text::windowHeight;
 float* Text::ratioW, *Text::ratioH;
 
 Text::Text(std::string text, float centerX, float centerY, float scaleX, float scaleY, glm::vec4 textColor)
@@ -37,8 +36,8 @@ Text::Text(std::string text, float centerX, float centerY, float scaleX, float s
 
 	this->height = Text::FTChars['T'].Size.y * (this->scaleY * *Text::ratioH);
 
-	this->realX = (centerX * *Text::windowWidth) - (this->width / 2.0f);
-	this->realY = (centerY * *Text::windowHeight) - (this->height / 2.0f);
+	this->realX = (centerX * *UIElement::WINDOWWIDTH) - (this->width / 2.0f);
+	this->realY = (centerY * *UIElement::WINDOWHEIGHT) - (this->height / 2.0f);
 }
 
 Text::~Text()
@@ -46,7 +45,7 @@ Text::~Text()
 
 }
 
-void Text::init(unsigned* WW, unsigned* WH, float* ratioW, float* ratioH, unsigned pixelHeight)
+void Text::init(float* ratioW, float* ratioH, unsigned pixelHeight)
 {
 	// freetype setup
 	if (FT_Init_FreeType(&Text::ftlib))
@@ -65,12 +64,10 @@ void Text::init(unsigned* WW, unsigned* WH, float* ratioW, float* ratioH, unsign
 		return;
 	}
 
-	Text::windowWidth = WW;
-	Text::windowHeight = WH;
 	Text::ratioW = ratioW;
 	Text::ratioH = ratioH;
 
-	Text::projection = glm::ortho(0.0f, (float)(*WW), 0.0f, (float)(*WH));
+	Text::projection = glm::ortho(0.0f, (float)(*UIElement::WINDOWWIDTH), 0.0f, (float)(*UIElement::WINDOWHEIGHT));
 	Text::textShader = std::unique_ptr<Shader>(new Shader("shaders/text.vert", "shaders/text.frag", true));
 
 	Text::pixelHeight = pixelHeight;
@@ -139,7 +136,7 @@ void Text::init(unsigned* WW, unsigned* WH, float* ratioW, float* ratioH, unsign
 
 void Text::update()
 {
-	this->projection = glm::ortho(0.0f, (float)*Text::windowWidth, 0.0f, (float)*Text::windowHeight);
+	Text::projection = glm::ortho(0.0f, (float)*UIElement::WINDOWWIDTH, 0.0f, (float)*UIElement::WINDOWHEIGHT);
 
 	this->width = 0.0f;
 	for (std::string::const_iterator c = this->text.begin(); c != this->text.end(); c++)
@@ -171,8 +168,8 @@ void Text::cleanup()
 
 void Text::render()
 {
-	this->realX = (this->centerX * *Text::windowWidth) - (this->width / 2.0f);
-	this->realY = (this->centerY * *Text::windowHeight) - (this->height / 2.0f);
+	this->realX = (this->centerX * *UIElement::WINDOWWIDTH) - (this->width / 2.0f);
+	this->realY = (this->centerY * *UIElement::WINDOWHEIGHT) - (this->height / 2.0f);
 
 	glBindVertexArray(Text::VAO);
 

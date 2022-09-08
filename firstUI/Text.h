@@ -37,7 +37,7 @@ public:
 	Text(std::string text, float centerX, float centerY, float scaleX, float scaleY, glm::vec4 textColor);
 	~Text();
 
-	static void init(unsigned* WW, unsigned* WH, float* ratioW, float* ratioH, unsigned pixelHeight);
+	static void init(float* ratioW, float* ratioH, unsigned pixelHeight);
 	static void cleanup();
 
 	void update();

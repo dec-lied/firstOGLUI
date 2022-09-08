@@ -6,6 +6,7 @@
 #include "Shader.h"
 
 #include "Text.h"
+#include "Image.h"
 #include "Button.h"
 
 class Yui

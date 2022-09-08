@@ -110,12 +110,14 @@ void Yui::loadScene(unsigned sceneID)
 
 		Yui::addElements
 		(
-			3,
+			5,
 			new Text("Play", 0.5f, 0.90f, 1.75f, 1.75f, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)),
-			new Text("Nothing here. Click the button to return to the main menu.", 0.5f, 0.5f, 1.0f, 1.0f, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)),
+			new Image("./images/oops.png", false, 0.5f, 0.5f, 0.925f, 0.4f),
+			new Text("Nothing here. Click the button to return to the main menu.", 0.5f, 0.25f, 1.0f, 1.0f, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)),
+			new Text("But here's a funny picture on my computer", 0.5f, 0.175f, 1.0f, 1.0f, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)),
 			new Button
 			(
-				new Text("Return", 0.5f, 0.15f, 1.0f, 1.0f, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)),
+				new Text("Return", 0.5f, 0.075f, 1.0f, 1.0f, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)),
 				2.0f, 1.5f, 0.025f, glm::vec4(0.92f, 0.92f, 0.92f, 1.0f), glm::vec4(0.96f, 0.96f, 0.96f, 1.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), []()
 				{
 					Yui::soundEngine->play2D("audio/flick2.mp3");
